@@ -6,7 +6,7 @@
   "license": "GPL-3.0-or-later",
   "repository": "github:leoCardosoDev/02_node_clean_arch",
   "scripts": {
-    "start": "node dist/main/server.js",
+    "start": "node dist/main/api",
     "debug": "nodemon -L --watch ./dist --inspect=0.0.0.0:9222 --nolazy ./dist/main/server.js",
     "build": "rimraf dist && tsc -p tsconfig-build.json",
     "build:watch": "rimraf dist && tsc -p tsconfig-build.json -w",
@@ -22,13 +22,15 @@
     "test:coveralls": "npm run test:ci && coveralls < coverage/lcov.info"
   },
   "devDependencies": {
-  },
-  "dependencies": {
+    "@types/module-alias": "^2.0.4",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.2"
   },
   "engines": {
     "node": "21.x"
   },
-  "_moduleAliases": {
-    "@": "dist"
+  "dependencies": {
+    "module-alias": "^2.2.3",
+    "rimraf": "^5.0.5"
   }
 }
