@@ -6,10 +6,10 @@
     "sourceMap": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "CommonJS",
+    "module": "commonjs",
     "moduleResolution": "Node",
     "esModuleInterop": true,
-    "baseUrl": "src",
+    "baseUrl": "./src",
     "paths": {
       "@/*": ["*"],
       "@/tests/*": ["../tests/*"]
