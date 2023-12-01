@@ -1,16 +1,18 @@
 import { MockProxy, mock } from 'jest-mock-extended'
 
 import { AuthenticationError } from '@/domain/errors'
+import { FacebookAccount } from '@/domain/models'
 
 import { LoadFacebookUserApi } from '@/application/contracts/apis'
+import { TokenGenerator } from '@/application/contracts/crypto'
 import { LoadUserAccountRepository, SaveFacebookAccountRepository } from '@/application/contracts/repository'
 import { FacebookAuthenticationService } from '@/application/services'
-import { FacebookAccount } from '@/domain/models'
 
 jest.mock('@/domain/models/facebook-account')
 
 describe('FacebookAuthenticationService', () => {
   let facebookApi: MockProxy<LoadFacebookUserApi>
+  let crypto: MockProxy<TokenGenerator>
   let userAccountRepo: MockProxy<LoadUserAccountRepository & SaveFacebookAccountRepository >
   let sut: FacebookAuthenticationService
   const token = 'any_token'
@@ -18,12 +20,14 @@ describe('FacebookAuthenticationService', () => {
     facebookApi = mock()
     userAccountRepo = mock()
     userAccountRepo.load.mockResolvedValue(undefined)
+    userAccountRepo.saveWithFacebook.mockResolvedValueOnce({ id: 'any_account_id' })
     facebookApi.loadUser.mockResolvedValue({
       name: 'any_fb_name',
       email: 'any_fb_email@fb.com',
       facebookId: 'any_fb_id'
     })
-    sut = new FacebookAuthenticationService(facebookApi, userAccountRepo)
+    crypto = mock()
+    sut = new FacebookAuthenticationService(facebookApi, userAccountRepo, crypto)
   })
 
   it('should call LoadFacebookUserApi with correct params', async () => {
@@ -50,5 +54,11 @@ describe('FacebookAuthenticationService', () => {
     jest.mocked(FacebookAccount).mockImplementation(FacebookAccountStub)
     expect(userAccountRepo.saveWithFacebook).toHaveBeenCalledWith({})
     expect(userAccountRepo.saveWithFacebook).toHaveBeenCalledTimes(1)
+  })
+
+  it('should call TokenGenerator with correct params', async () => {
+    await sut.perform({ token })
+    expect(crypto.generateToken).toHaveBeenCalledWith({ key: 'any_account_id' })
+    expect(crypto.generateToken).toHaveBeenCalledTimes(1)
   })
 })
