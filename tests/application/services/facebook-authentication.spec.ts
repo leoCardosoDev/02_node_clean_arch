@@ -85,4 +85,10 @@ describe('FacebookAuthenticationService', () => {
     const promise = sut.perform({ token })
     await expect(promise).rejects.toThrow(new Error('save_error'))
   })
+
+  it('should rethrow if TokenGenerator throws', async () => {
+    crypto.generateToken.mockRejectedValueOnce(new Error('generate_token_error'))
+    const promise = sut.perform({ token })
+    await expect(promise).rejects.toThrow(new Error('generate_token_error'))
+  })
 })
