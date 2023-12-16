@@ -2,7 +2,7 @@ import { sign } from 'jsonwebtoken'
 
 import { TokenGenerator } from '@/application/contracts/crypto'
 
-export class JsonWebTokenGenerator {
+export class JsonWebTokenGenerator implements TokenGenerator {
   constructor (private readonly secret: string) {}
   async generateToken (params: TokenGenerator.Params): Promise<TokenGenerator.Result> {
     const expirationsInSeconds = params.expirationInMs / 1000
